@@ -1,18 +1,19 @@
 import { formatSize } from "lib/utils";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
 interface FileUploaderProps {
   onFileSelect?: (file: File | null) => void;
-  setFiles: React.Dispatch<React.SetStateAction<File | null>>;
+  files: File | null;
 }
 
-const FileUploader = ({ onFileSelect, setFiles }: FileUploaderProps) => {
+const FileUploader = ({ onFileSelect, files }: FileUploaderProps) => {
+  const [zoneAcceptedFiles, setZoneAcceptedFiles] = useState<File[]>([]);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0] || null;
-
+      setZoneAcceptedFiles(Array.from(acceptedFiles));
       onFileSelect?.(file);
     },
     [onFileSelect]
@@ -28,13 +29,19 @@ const FileUploader = ({ onFileSelect, setFiles }: FileUploaderProps) => {
   const maxFileSize = 20 * 1024 * 1024;
   const file = acceptedFiles[0] || null;
 
+  useEffect(() => {
+    if (!files && acceptedFiles.length > 0) {
+      setZoneAcceptedFiles([]);
+    }
+  }, [files, acceptedFiles]);
+
   return (
     <div className="w-full gradient-border">
       <div {...getRootProps()}>
         <input {...getInputProps()} />
 
         <div className="space-y-4 cursor-pointer">
-          {file ? (
+          {files ? (
             <div
               className="uploader-selected-file"
               onClick={(e) => e.stopPropagation()}
@@ -54,7 +61,6 @@ const FileUploader = ({ onFileSelect, setFiles }: FileUploaderProps) => {
                 type="button"
                 className="p-2 cursor-pointer"
                 onClick={(e) => {
-                  setFiles(null);
                   onFileSelect?.(null);
                 }}
               >
