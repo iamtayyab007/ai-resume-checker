@@ -7,8 +7,10 @@ const Navbar = () => {
       <Link to="/">
         <p className="text-2xl font-bold text-gradient">Resumind</p>
       </Link>
-      <Link to="/upload"></Link>
-      <p className="primary-button w-fit">Upload</p>
+      <Link to="/upload">
+        {" "}
+        <p className="primary-button w-fit">Upload</p>
+      </Link>
     </nav>
   );
 };

@@ -15,6 +15,8 @@ interface Resume {
 }
 
 interface Feedback {
+  improvements: never[];
+  ats_compatibility: any;
   overallScore: number;
   ATS: {
     score: number;

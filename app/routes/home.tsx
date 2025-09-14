@@ -18,10 +18,31 @@ export default function Home() {
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loadingResumes, setLoadingResumes] = useState(false);
   const navigate = useNavigate();
+  const [authLoading, setAuthLoading] = useState(true);
+  const [authUser, setAuthUser] = useState<PuterUser | null>(null);
+
+  // useEffect(() => {
+  //   if (!auth.isAuthenticated) navigate("/auth?next=/");
+  // }, [auth.isAuthenticated]);
 
   useEffect(() => {
-    if (!auth.isAuthenticated) navigate("/auth?next=/");
-  }, [auth.isAuthenticated]);
+    async function checkAuth() {
+      try {
+        const user = await auth.getUser();
+        if (!user) {
+          navigate("/auth?next=/");
+          return;
+        }
+        setAuthUser(user);
+      } catch (err) {
+        console.log("Auth error:", err);
+        navigate("/auth?next=/");
+      } finally {
+        setAuthLoading(false);
+      }
+    }
+    checkAuth();
+  }, [navigate]);
 
   useEffect(() => {
     const loadResumes = async () => {
